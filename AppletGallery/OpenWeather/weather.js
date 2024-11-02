@@ -21,3 +21,27 @@ class WeatherApp {
         this.getLocationBtn.addEventListener('click', () => this.fetchWeatherByLocation());
 
     }
+
+    async fetchWeather() {
+        const apiKey = this.apiKeyInput.value.trim();
+        const city = this.cityInput.value.trim();
+        if (!apiKey || !city) {
+            alert('Please enter your API key and a city name.');
+            return;
+        }
+        const data = await this.getWeatherData(`q=${city}`, apiKey);
+        if (data) this.displayWeather(data);
+    }async fetchWeatherByLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async ({ coords: { latitude, longitude } }) => {
+                    const apiKey = this.apiKeyInput.value.trim();
+                    const data = await this.getWeatherData(`lat=${latitude}&lon=${longitude}`, apiKey);
+                    if (data) this.displayWeather(data);
+                },
+                () => alert('Unable to retrieve your location. Please allow location access.')
+            );
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    }
